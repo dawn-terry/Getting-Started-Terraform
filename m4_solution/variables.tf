@@ -30,10 +30,10 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-variable "vpc_public_subnet1_cidr_block" {
-  type        = string
-  description = "CIDR Block for Subnet 1 in VPC"
-  default     = "10.0.0.0/24"
+variable "vpc_public_subnets_cidr_block" {
+  type        = list(string)
+  description = "CIDR Block for public Subnets in VPC"
+  default     = ["10.0.0.0/24", "10.0.1.0/24"]
 }
 
 variable "map_public_ip_on_launch" {
@@ -46,6 +46,18 @@ variable "instance_type" {
   type        = string
   description = "Type for EC2 Instnace"
   default     = "t3.micro"
+}
+
+variable "instance_user_data" {
+  type = string
+  description = "User data for new intance"
+  default = <<EOF
+#! /bin/bash
+sudo amazon-linux-extras install -y nginx1
+sudo service nginx start
+sudo rm /usr/share/nginx/html/index.html
+echo '<html><head><title>Taco Team Server</title></head><body style=\"background-color:#1F778D\"><p style=\"text-align: center;\"><span style=\"color:#FFFFFF;\"><span style=\"font-size:28px;\">You did it! Have a &#127790;</span></span></p></body></html>' | sudo tee /usr/share/nginx/html/index.html
+EOF
 }
 
 ## Add these after the local value discussion
@@ -65,3 +77,4 @@ variable "billing_code" {
   type        = string
   description = "Billing code for resource tagging"
 }
+
